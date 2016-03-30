@@ -1,0 +1,6 @@
+[2016-03-28 02:34:19.314 GMT] ERROR JobThread|14982745|Workflow-Start-Tervis|Workflow-Start custom   [bvExportPurchaseFeed.ds exception caught]Cannot call method "equals" of null
+[2016-03-28 06:34:23.234 GMT] ERROR JobThread|13066490|Workflow-Start-Tervis|Workflow-Start custom   [bvExportPurchaseFeed.ds exception caught]Cannot call method "equals" of null
+[2016-03-28 10:34:23.516 GMT] ERROR JobThread|5594080|Workflow-Start-Tervis|Workflow-Start custom   [bvExportPurchaseFeed.ds exception caught]Cannot call method "equals" of null
+[2016-03-28 14:34:21.664 GMT] ERROR JobThread|9268720|Workflow-Start-Tervis|Workflow-Start custom   [bvExportPurchaseFeed.ds exception caught]Cannot call method "equals" of null
+[2016-03-28 18:34:18.522 GMT] ERROR JobThread|16909914|Workflow-Start-Tervis|Workflow-Start custom   [bvExportPurchaseFeed.ds exception caught]Cannot call method "equals" of null
+[2016-03-28 22:34:19.383 GMT] ERROR JobThread|20442824|Workflow-Start-Tervis|Workflow-Start custom   [bvExportPurchaseFeed.ds exception caught]Cannot call method "equals" of null
