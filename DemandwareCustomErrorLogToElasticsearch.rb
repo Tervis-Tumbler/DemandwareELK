@@ -1,9 +1,11 @@
 input {
     file {
+        #path => "C:/Users/cmagnuson/Desktop/DemandwareLogs/customerror-blade2-2-appserver-*.log"
         #path => "C:/Users/cmagnuson/Desktop/DemandwareLogs/error-*.log"
-        path => "$LogstashFilePathValue"
+        #path => "C:/Users/cmagnuson/Desktop/DemandwareLogs/error-blade0-0-appserver-20160329.log"
+        path => "C:\Users\cmagnuson\DemandwareLogs\error-blade0-0-appserver-20160329-sample.log"
         type => "error"
-        tags => "$EnvironmentName"
+        tags => "production"
         start_position => "beginning"
         sincedb_path => "NUL"
         codec => multiline {
@@ -37,7 +39,7 @@ filter {
     }
     grok {
         match => [ "message", "(?<SectionWtihKeyValues>System Information(.|\r|\n)*\z)"]
-    } 
+    }
     kv {
         source => "SectionWtihKeyValues"
         field_split => "\r\n"
