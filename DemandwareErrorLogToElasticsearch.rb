@@ -10,6 +10,7 @@ input {
             pattern => "\A\[%{TIMESTAMP_ISO8601:demandware_timestamp} GMT\]"
             negate => true
             what => previous
+            charset => "UCS-2BE"
         }
     }
 }
