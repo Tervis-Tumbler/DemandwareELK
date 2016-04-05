@@ -1,8 +1,8 @@
 input {
     file {
-        #path => "C:/Users/cmagnuson/Desktop/DemandwareLogs/error-*.log"
+        #path => "C:/Users/username/Desktop/DemandwareLogs/error-*.log"
         path => "$LogstashFilePathValue"
-        type => "error"
+        type => "DemandwareError"
         tags => "$EnvironmentName"
         start_position => "beginning"
         sincedb_path => "NUL"
@@ -10,9 +10,7 @@ input {
             pattern => "\A\[%{TIMESTAMP_ISO8601:demandware_timestamp} GMT\]"
             negate => true
             what => previous
-            #charset => "UCS-2BE"
-            charset => "UTF-16BE"
-            #charset => "UTF-16LE"
+            auto_flush_interval => 10
         }
     }
 }
@@ -78,10 +76,16 @@ filter {
     }
 }
 output {
-    stdout { codec => rubydebug }
-    #elasticsearch {
-    #    hosts => localhost
-    #    index => "logstash-demandware-error-%{+YYYY.MM}"
-    #    document_id => "%{demandware_timestamp}%{FileNameWithoutExtension}"
-    #}
+$(
+if ($Development) {
+    "stdout { codec => rubydebug }"
+} else { @"
+    elasticsearch {
+        hosts => localhost
+        index => "logstash-demandware-error-%{+YYYY.MM}"
+        document_id => "%{ElasticSearchDocumentID}"
+    }
+"@
+}
+)
 }
