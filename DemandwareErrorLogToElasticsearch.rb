@@ -5,12 +5,14 @@ input {
         type => "DemandwareError"
         tags => "$EnvironmentName"
         start_position => "beginning"
+        ignore_older => 99999999
         sincedb_path => "NUL"
         codec => multiline {
             pattern => "\A\[%{TIMESTAMP_ISO8601:demandware_timestamp} GMT\]"
             negate => true
             what => previous
             auto_flush_interval => 10
+            max_lines => 9999
         }
     }
 }
@@ -21,6 +23,7 @@ filter {
     }
     date {
         match => ["demandware_timestamp", "YYYY-MM-dd HH:mm:ss.SSS"]
+        timezone => "UTC"
     }
     
     grok {
@@ -33,6 +36,7 @@ filter {
     
     mutate {
         add_field => {"UnparsedMessage" => "%{message}"}
+        add_field => {"MessageHash" => "%{message}"}
     }
     
     grok {
@@ -65,25 +69,32 @@ filter {
         match => [ "UnparsedMessage", "\[[0-9\:\s\.\-A-Z]+\]\s%{WORD:LoggerLevel}\s%{WORD:servlet}\|%{NUMBER:idk}\|%{DATA:sitename}\|%{DATA:action}\|%{WORD:pipeline}\|%{DATA:sessionid} %{DATA:ExceptionClass} %{GREEDYDATA:short_message}" ]
     }
     
-    if [demandware_timestamp] {
-        mutate {
-            add_field => { "ElasticSearchDocumentID" => "%{demandware_timestamp}%{FileNameWithoutExtension}" }
-        }
-    } else {
-         mutate {
-            add_field => { "ElasticSearchDocumentID" => "%{@timestamp}%{FileNameWithoutExtension}"}
-        }   
+    #if [demandware_timestamp] {
+    #    mutate {
+    #        add_field => { "ElasticSearchDocumentID" => "%{demandware_timestamp}%{FileNameWithoutExtension}" }
+    #    }
+    #} else {
+    #     mutate {
+    #        add_field => { "ElasticSearchDocumentID" => "%{@timestamp}%{FileNameWithoutExtension}"}
+    #    }   
+    #}
+    
+    anonymize {
+        algorithm => "SHA1"
+        fields => ["MessageHash"]
+        key => ""
     }
 }
 output {
 $(
-if ($Development) {
-    "stdout { codec => rubydebug }"
+if ($Development) {@"
+    stdout { codec => rubydebug }
+"@
 } else { @"
     elasticsearch {
         hosts => localhost
         index => "logstash-demandware-error-%{+YYYY.MM}"
-        document_id => "%{ElasticSearchDocumentID}"
+        document_id => "%{MessageHash}"
     }
 "@
 }
