@@ -1,7 +1,7 @@
 input {
     file {
         path => "$LogstashFilePathValue"
-        type => "DemandwareCustomError"
+        type => "DemandwareService-Taxware"
         tags => "$EnvironmentName"
         start_position => "beginning"
         ignore_older => 99999999
@@ -30,7 +30,7 @@ filter {
     }
     
     grok {
-        match => { "FileNameWithoutExtension" => "\A%{WORD:LogFileType}-(?<LogFileBlade>[[:alpha:]]+[[:digit:]]-[[:digit:]])-%{WORD:LogFileBladeRole}-%{YEAR:LogFileYear}%{MONTHNUM:LogFileMonth}%{MONTHDAY:LogFileDay}"}
+        match => { "FileNameWithoutExtension" => "\A(?<LogFileType>service-Taxware)-(?<LogFileBlade>[[:alpha:]]+[[:digit:]]-[[:digit:]])-%{WORD:LogFileBladeRole}-%{YEAR:LogFileYear}%{MONTHNUM:LogFileMonth}%{MONTHDAY:LogFileDay}"}
     }
     
     mutate {
@@ -57,7 +57,7 @@ if ($Development) {@"
 } else { @"
     elasticsearch {
         hosts => localhost
-        index => "logstash-demandware-customerror-%{+YYYY.MM}"
+        index => "logstash-demandware-service-taxware-%{+YYYY.MM}"
         document_id => "%{MessageHash}"
     }
 "@

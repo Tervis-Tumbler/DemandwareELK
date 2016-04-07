@@ -1,7 +1,8 @@
 input {
     file {
+        #path => "C:/Users/username/Desktop/DemandwareLogs/error-*.log"
         path => "$LogstashFilePathValue"
-        type => "DemandwareCustomError"
+        type => "DemandwareCustom-Int_Bronto"
         tags => "$EnvironmentName"
         start_position => "beginning"
         ignore_older => 99999999
@@ -30,7 +31,7 @@ filter {
     }
     
     grok {
-        match => { "FileNameWithoutExtension" => "\A%{WORD:LogFileType}-(?<LogFileBlade>[[:alpha:]]+[[:digit:]]-[[:digit:]])-%{WORD:LogFileBladeRole}-%{YEAR:LogFileYear}%{MONTHNUM:LogFileMonth}%{MONTHDAY:LogFileDay}"}
+        match => { "FileNameWithoutExtension" => "\A(?<LogFileType>custom-int_bronto)-(?<LogFileBlade>[[:alpha:]]+[[:digit:]]-[[:digit:]])-%{WORD:LogFileBladeRole}-%{YEAR:LogFileYear}%{MONTHNUM:LogFileMonth}%{MONTHDAY:LogFileDay}"}
     }
     
     mutate {
@@ -39,10 +40,9 @@ filter {
     
     grok {
         break_on_match => false
-        match => [ "message", "\[[0-9\:\s\.\-A-Z]+\]\s%{WORD:LoggerLevel}\s%{WORD:servlet}\|%{NUMBER:idk}\|%{DATA:sitename}\|%{DATA:action}\|%{WORD:pipeline}\|%{DATA:sessionid} %{DATA:ExceptionClass}\s\s\-\s%{DATA:sitename}\s%{WORD:ExceptionType}\s%{WORD:storefront}\s%{DATA:sessionid}\s%{DATA:random}\s%{DATA:alsorandom}\s%{GREEDYDATA:short_message}" ]
-        match => [ "message", "\[[0-9\:\s\.\-A-Z]+\]\s%{WORD:LoggerLevel}\s%{WORD:servlet}\|%{NUMBER:idk}\|%{DATA:sitename}\|%{DATA:action}\|%{WORD:pipeline}\|%{DATA:sessionid} %{DATA:ExceptionClass} %{GREEDYDATA:short_message}" ]
+        match => [ "message", "\A%{SYSLOG5424SD} %{WORD:LoggerLevel} (?<ThreadName>[^|]+)\|(?<ThreadID>[^|]+)\|(?<NiceName>[^|]+)\|%{NOTSPACE:CodeName} %{NOTSPACE:ClassAndMethod}%{SPACE}%{GREEDYDATA:InterfaceMessage}" ]
     }
-    
+        
     anonymize {
         algorithm => "SHA1"
         fields => ["MessageHash"]
@@ -57,7 +57,7 @@ if ($Development) {@"
 } else { @"
     elasticsearch {
         hosts => localhost
-        index => "logstash-demandware-customerror-%{+YYYY.MM}"
+        index => "logstash-demandware-custom-int_bronto-%{+YYYY.MM}"
         document_id => "%{MessageHash}"
     }
 "@
