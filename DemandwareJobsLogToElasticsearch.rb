@@ -43,13 +43,17 @@ filter {
     
     grok {
         #break_on_match => false
-        match => [ "message", "\A%{SYSLOG5424SD} Created Job configuration for Schedule \[%{CISCO_REASON:ScheduleName}, %{WORD:ScheduleID}]" ]
-        match => [ "message", "\A%{SYSLOG5424SD} Created Job configuration for domain \[%{CISCO_REASON:DomainName}]\. Job type \[%{BASE10NUM:JobTypeNumber}]\. Job Configuration \[, %{WORD:JobConfigurationID}]" ]
-        match => [ "message", "\A%{SYSLOG5424SD} Started executing job pipeline\. Schedule \[%{CISCO_REASON:ScheduleName}, %{WORD:ScheduleID}]\. Job configuration \[%{CISCO_REASON:JobConfigurationName}, %{WORD:JobConfigurationID}]\. Domain \[%{CISCO_REASON:DomainName}]" ]
-        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{CISCO_REASON:ScheduleName}, %{WORD:ScheduleID}, %{WORD:JobConfigurationID}, %{PROG:sitename}] has \[%{BASE10NUM:NumberOfResourcesAssociatedWithJob}] resources associated with it\. ThreadId \[%{WORD:ThreadName}\|%{BASE10NUM:ThreadID}\|%{CISCO_REASON:NiceName}\|%{PROG:CodeName}\[%{BASE10NUM:NumberAfterCodeName}]]" ]
-        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{CISCO_REASON:ScheduleName}, %{WORD:JobConfigurationID}, %{CISCO_REASON:sitename}] Execute pipeline\. PipeLine: %{JAVAFILE}, ThreadId: %{CISCO_REASON:ThreadName}\|%{BASE10NUM:ThreadID}\|%{CISCO_REASON:NiceName}\|%{JAVAFILE:CodeName}\[%{BASE10NUM:NumberAfterCodeName}], User: %{WORD:UserName}" ]
-        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{CISCO_REASON:ScheduleName}, %{WORD:JobConfigurationID}, %{CISCO_REASON:sitename}] Done executing pipeline\. PipeLine: %{JAVAFILE}, ThreadId: %{CISCO_REASON:ThreadName}\|%{BASE10NUM:ThreadID}\|%{CISCO_REASON:NiceName}\|%{JAVAFILE:CodeName}\[%{BASE10NUM:NumberAfterCodeName}]" ]
-        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{CISCO_REASON:ScheduleName}, %{WORD:JobConfigurationID}, %{CISCO_REASON:sitename}] total execution time %{BASE10NUM:TotalJobExecutionTime} ms\." ]
+        match => [ "message", "\A%{SYSLOG5424SD} Created Job configuration for Schedule \[%{NOTCOMMA:ScheduleName}, %{NOTBRACKET:ScheduleID}\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Created Job configuration for domain \[%{NOTBRACKET:DomainName}\]\. Job type \[%{BASE10NUM:JobTypeNumber}\]\. Job Configuration \[, %{NOTBRACKET:JobConfigurationID}\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Started executing job pipeline\. Schedule \[%{NOTCOMMA:ScheduleName}, %{WORD:ScheduleID}\]\. Job configuration \[%{NOTCOMMA:JobConfigurationName}, %{NOTBRACKET:JobConfigurationID}\]\. Domain \[%{NOTBRACKET:DomainName}\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} I will not run schedule \[%{NOTCOMMA:ScheduleName}, %{NOTBRACKET:JobConfigurationID}\]\. Reason \[%{NOTBRACKET:ReasonForNotRunningSchedule}\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{NOTCOMMA:ScheduleName}, %{NOTCOMMA:ScheduleID}, %{NOTCOMMA:JobConfigurationID}, %{NOTBRACKET:sitename}\] has \[%{BASE10NUM:NumberOfResourcesAssociatedWithJob}\] resources associated with it\. ThreadId \[%{NOTPIPE:ThreadName}\|%{BASE10NUM:ThreadID}\|%{NOTPIPE:NiceName}\|%{NOTBRACKET:CodeName}\[%{BASE10NUM:NumberAfterCodeName}\]\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{NOTCOMMA:JobConfigurationName}, %{NOTCOMMA:JobConfigurationID}, %{NOTBRACKET:sitename}\] Execute pipeline\. PipeLine: %{NOTCOMMA:PipeLineName}, ThreadId: %{NOTPIPE:ThreadName}\|%{BASE10NUM:ThreadID}\|%{NOTPIPE:NiceName}\|%{NOTBRACKET:CodeName}\[%{BASE10NUM:NumberAfterCodeName}\], User: %{WORD:UserName}" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{NOTCOMMA:JobConfigurationName}, %{NOTCOMMA:JobConfigurationID}, %{NOTBRACKET:sitename}\] Done executing pipeline\. PipeLine: %{NOTCOMMA:PipeLineName}, ThreadId: %{NOTPIPE:ThreadName}\|%{BASE10NUM:ThreadID}\|%{NOTPIPE:NiceName}\|%{NOTBRACKET:CodeName}\[%{BASE10NUM:NumberAfterCodeName}\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{NOTCOMMA:JobConfigurationName}, %{NOTCOMMA:JobConfigurationID}, %{NOTBRACKET:sitename}\] total execution time %{BASE10NUM:TotalJobExecutionTime} ms\." ]
+        match => [ "message", "\A%{SYSLOG5424SD} Job \[%{NOTCOMMA:ScheduleName}, %{NOTBRACKET:ScheduleID}\], Submitting Job Schedule for execution. ThreadId \[%{NOTBRACKET:ThreadName}\[%{BASE10NUM:NumberAfterThreadName}\]\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Monitor could not be locked for Job \[%{NOTCOMMA:ScheduleName}, %{NOTBRACKET:JobConfigurationID}\]\. ThreadId: %{NOTPIPE:ThreadName}\|%{BASE10NUM:ThreadID}\[%{BASE10NUM:NumberAfterThreadID}\]" ]
+        match => [ "message", "\A%{SYSLOG5424SD} Hung job detection. Job \[%{NOTCOMMA:ScheduleName}, %{NOTBRACKET:ScheduleID}\] does not appear to hang. Action \[%{NOTBRACKET:Action}\]" ]
         tag_on_failure => ["JobContent_grokparsefailure"]
     }
     
